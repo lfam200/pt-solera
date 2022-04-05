@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -14,13 +14,23 @@ const FormServices = ({ categories, handleAddService }) => {
 
   const [data, handleInputChange, reset] = useForm(initialValues);
 
+  const [validated, setValidated] = useState(false);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleAddService(data);
-    reset();
+    const form = e.currentTarget;
+    if (form.checkValidity()) {
+      handleAddService(data);
+      setValidated(false);
+      reset();
+    } else {
+      setValidated(true);
+      e.stopPropagation();
+    }
   };
+
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form noValidate validated={validated} onSubmit={handleSubmit}>
       <Card>
         <Card.Body>
           <Card.Title>Servicio</Card.Title>
@@ -32,7 +42,11 @@ const FormServices = ({ categories, handleAddService }) => {
               value={data.name}
               onChange={handleInputChange}
               autoFocus={true}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              Ingrese un nombre
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -42,7 +56,11 @@ const FormServices = ({ categories, handleAddService }) => {
               name="description"
               value={data.description}
               onChange={handleInputChange}
+              required
             />
+            <Form.Control.Feedback type="invalid">
+              Ingrese una descripción
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Categoría</Form.Label>
@@ -50,6 +68,7 @@ const FormServices = ({ categories, handleAddService }) => {
               name="category_id"
               onChange={handleInputChange}
               value={data.category_id}
+              required
             >
               <option value="">Selecciona una categoría</option>
               {categories &&
@@ -59,6 +78,9 @@ const FormServices = ({ categories, handleAddService }) => {
                   </option>
                 ))}
             </Form.Select>
+            <Form.Control.Feedback type="invalid">
+              Seleccione una categoría
+            </Form.Control.Feedback>
           </Form.Group>
         </Card.Body>
         <Card.Footer className="d-flex justify-content-between">

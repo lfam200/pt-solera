@@ -11,7 +11,7 @@ const Services = ({
   handleDelete,
 }) => {
   const itemsFilter =
-    filter == 0
+    parseInt(filter) === 0
       ? services
       : services.filter((item) => item.category_id === filter);
 
